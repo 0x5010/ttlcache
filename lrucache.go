@@ -31,12 +31,14 @@ func (i *item) expired() bool {
 	return value
 }
 
-type coverageCache struct {
+// CoverageCache 缓存
+type CoverageCache struct {
 	mutex sync.RWMutex
 	items map[string]*item
 }
 
-func (cache *coverageCache) set(key string, data []byte, ttl time.Duration) {
+// Set 缓存数据
+func (cache *CoverageCache) Set(key string, data []byte, ttl time.Duration) {
 	cache.mutex.Lock()
 	defer cache.mutex.Unlock()
 	item := &item{
@@ -47,7 +49,8 @@ func (cache *coverageCache) set(key string, data []byte, ttl time.Duration) {
 	cache.items[key] = item
 }
 
-func (cache *coverageCache) get(key string) (data []byte, found bool) {
+// Get 获取缓存
+func (cache *CoverageCache) Get(key string) (data []byte, found bool) {
 	cache.mutex.RLock()
 	defer cache.mutex.RUnlock()
 	item, exists := cache.items[key]
@@ -61,14 +64,15 @@ func (cache *coverageCache) get(key string) (data []byte, found bool) {
 	return
 }
 
-func (cache *coverageCache) count() int {
+// Count 获取缓存个数
+func (cache *CoverageCache) Count() int {
 	cache.mutex.RLock()
 	defer cache.mutex.RUnlock()
 	count := len(cache.items)
 	return count
 }
 
-func (cache *coverageCache) cleanup() {
+func (cache *CoverageCache) cleanup() {
 	cache.mutex.Lock()
 	for key, item := range cache.items {
 		if item.expired() {
@@ -78,7 +82,7 @@ func (cache *coverageCache) cleanup() {
 	cache.mutex.Unlock()
 }
 
-func (cache *coverageCache) clean(duration time.Duration) {
+func (cache *CoverageCache) clean(duration time.Duration) {
 	cleanTicker := time.NewTicker(duration)
 	defer cleanTicker.Stop()
 
@@ -90,22 +94,33 @@ func (cache *coverageCache) clean(duration time.Duration) {
 	}
 }
 
+// New 新建缓存
+func New(duration time.Duration) *CoverageCache {
+	cache = &CoverageCache{
+		items: map[string]*item{},
+	}
+	go cache.clean(duration)
+	return cache
+}
+
 // Cache 默认全局缓存
-var cache *coverageCache
+var cache *CoverageCache
 
 // Get 从默认缓存中读取
 func Get(key string) ([]byte, bool) {
-	return cache.get(key)
+	return cache.Get(key)
 }
 
 // Set 设置缓存到默认缓存中
 func Set(key string, value []byte, ttl time.Duration) {
-	cache.set(key, value, ttl)
+	cache.Set(key, value, ttl)
+}
+
+// Count 当前缓存个数
+func Count() int {
+	return cache.Count()
 }
 
 func init() {
-	cache = &coverageCache{
-		items: map[string]*item{},
-	}
-	go cache.clean(time.Duration(20 * time.Minute))
+	cache = New(time.Duration(20 * time.Minute))
 }

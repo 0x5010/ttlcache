@@ -1,4 +1,4 @@
-package lrucache
+package ttlcache
 
 import (
 	"sync"

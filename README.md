@@ -1,23 +1,23 @@
-This is a lrucache in the [Go](http:golang.org).
+This is a ttlcache in the [Go](http:golang.org).
 
-[![Build Status](https://travis-ci.org/0x5010/lrucache.png?branch=master)](https://travis-ci.org/0x5010/lrucache)
+[![Build Status](https://travis-ci.org/0x5010/ttlcache.png?branch=master)](https://travis-ci.org/0x5010/ttlcache)
 
 Installation
 -----------
 
-	go get github.com/0x5010/lrucache
+	go get github.com/0x5010/ttlcache
 
 
 Usage
 -----------
 
-Get and set with default lrucache:
+Get and set with default ttlcache:
 ```go
 // cache bytes
-lrucache.Set("key", []byte("value"), time.Duration(30*time.Second))
+ttlcache.Set("key", []byte("value"), time.Duration(30*time.Second))
 
 // get
-b, ok := lrucache.Get("key")
+b, ok := ttlcache.Get("key")
 ```
 ```go
 // cache other with gob
@@ -33,10 +33,10 @@ err := encoder.Encode(testStruct)
 if err != nil {
 	return nil, err
 }
-lrucache.Set("key", serialize.Bytes(), time.Duration(30*time.Second))
+ttlcache.Set("key", serialize.Bytes(), time.Duration(30*time.Second))
 
 // get
-b, ok := lrucache.Get("key")
+b, ok := ttlcache.Get("key")
 
 t := &Test{}
 decoder := gob.NewDecoder(bytes.NewReader(b))
@@ -44,7 +44,7 @@ err := decoder.Decode(t)
 ```
 new cache:
 ```go
-myCache := lrucache.New(time.Duration(20 * time.Minute))
+myCache := ttlcache.New(time.Duration(20 * time.Minute))
 
 myCache.Set("key", []byte("value"), time.Duration(30*time.Second))
 

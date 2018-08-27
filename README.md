@@ -1,6 +1,9 @@
 This is a ttlcache in the [Go](http:golang.org).
 
+[![LICENSE](https://img.shields.io/badge/license-MIT-orange.svg)](LICENSE)
 [![Build Status](https://travis-ci.org/0x5010/ttlcache.png?branch=master)](https://travis-ci.org/0x5010/ttlcache)
+[![Go Report Card](https://goreportcard.com/badge/github.com/0x5010/ttlcache)](https://goreportcard.com/report/github.com/0x5010/ttlcache)
+[![Godoc](http://img.shields.io/badge/go-documentation-blue.svg?style=flat-square)](https://godoc.org/github.com/0x5010/ttlcache)
 
 Installation
 -----------
